@@ -1,8 +1,15 @@
-package com.underscore.sudokuprime;
+package com.underscore.sudokuprime.models;
 
-public class User {
+import jakarta.persistence.*;
 
+@Entity
+public class UserModel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long pKey;
     private String name;
+    @Column(unique=true)
     private String userId;
     private String age;
     private String email;
@@ -11,9 +18,22 @@ public class User {
     private String isTop100;
     private String boardsSolved;
     private String totalBoardPlayed;
+    private String fcmToken;
 
 
-    public User(String name, String userId, String age, String email, String badge, String rank, String isTop100, String boardsSolved, String totalBoardPlayed) {
+    public UserModel() {
+    }
+
+    public UserModel(String name,
+                     String userId,
+                     String age,
+                     String email,
+                     String badge,
+                     String rank,
+                     String isTop100,
+                     String boardsSolved,
+                     String totalBoardPlayed,
+                     String fcmToken) {
         this.name = name;
         this.userId = userId;
         this.age = age;
@@ -23,6 +43,7 @@ public class User {
         this.isTop100 = isTop100;
         this.boardsSolved = boardsSolved;
         this.totalBoardPlayed = totalBoardPlayed;
+        this.fcmToken = fcmToken;
     }
 
     public String getName() {
@@ -95,5 +116,13 @@ public class User {
 
     public void setTotalBoardPlayed(String totalBoardPlayed) {
         this.totalBoardPlayed = totalBoardPlayed;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

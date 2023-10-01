@@ -1,6 +1,18 @@
 server:
-  port: 3000
+  port: 443
 
 spring:
+  datasource:
+    url: jdbc:postgresql://postgres1.cqjcsrxo1aks.us-east-1.rds.amazonaws.com/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
   main:
     web-application-type: servlet
