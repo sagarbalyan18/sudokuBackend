@@ -15,7 +15,7 @@ COPY src/ ./src/
 RUN mvn package
 
 # Stage 2: Create the final Docker image with Java 17
-FROM adoptopenjdk:17-jre-hotspot
+FROM openjdk:17-jre-slim
 
 # Set the working directory in the container
 WORKDIR /app
