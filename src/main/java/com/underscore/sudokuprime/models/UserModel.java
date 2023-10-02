@@ -19,7 +19,7 @@ public class UserModel {
     private String boardsSolved;
     private String totalBoardPlayed;
     private String fcmToken;
-
+    private String status;
 
     public UserModel() {
     }
@@ -124,5 +124,13 @@ public class UserModel {
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

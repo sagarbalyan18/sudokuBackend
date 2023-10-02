@@ -53,7 +53,11 @@ public class SudokuPrimeApplication {
 		System.out.println("User Id Request: " + userIdRequest);
 		if(userRepository.getUserByUserId(userIdRequest.userId)!=null){
 			return userRepository.getUserByUserId(userIdRequest.userId);
-		} return null;
+		} else {
+			UserModel user= new UserModel();
+			user.setStatus("failure");
+			return user;
+		}
 	}
 
 	@PostMapping("/addUser")
