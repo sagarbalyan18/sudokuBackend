@@ -1,5 +1,5 @@
-# Use an official Maven image as the build environment
-FROM maven:3.8-openjdk-11 as builder
+# Stage 1: Build the Spring Boot application using Maven
+FROM maven:3.8.2-openjdk-17-slim as builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -14,14 +14,14 @@ COPY src/ ./src/
 # Build the Spring Boot application
 RUN mvn package
 
-# Use a lightweight OpenJDK JRE image for the runtime environment
-FROM openjdk:11-jre-slim
+# Stage 2: Create the final Docker image with Java 17
+FROM adoptopenjdk/openjdk17:alpine-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Copy the compiled JAR file from the builder stage
-COPY --from=builder /app/target/sudokuprime-1.0.0-SNAPSHOT.jar app.jar
+COPY --from=builder /app/target/your-springboot-app.jar app.jar
 
 # Expose the port that the Spring Boot application will run on
 EXPOSE 8080
