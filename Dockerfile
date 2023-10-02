@@ -1,9 +1,30 @@
-FROM maven:3.5-jdk-8 AS build  
-COPY src /usr/src/app/src  
-COPY pom.xml /usr/src/app  
-RUN mvn -f /usr/src/app/pom.xml clean package
+# Use an official Maven image as the build environment
+FROM maven:3.8-openjdk-11 as builder
 
-FROM gcr.io/distroless/java  
-COPY --from=build /usr/src/app/target/sudokuprime-1.0.0-SNAPSHOT.jar /usr/app/sudokuprime-1.0.0-SNAPSHOT.jar  
-EXPOSE 8080  
-ENTRYPOINT ["java","-jar","/usr/app/sudokuprime-1.0.0-SNAPSHOT.jar"]  
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Maven project file and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy the application source code into the container
+COPY src/ ./src/
+
+# Build the Spring Boot application
+RUN mvn package
+
+# Use a lightweight OpenJDK JRE image for the runtime environment
+FROM openjdk:11-jre-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the compiled JAR file from the builder stage
+COPY --from=builder /app/target/sudokuprime-1.0.0-SNAPSHOT.jar app.jar
+
+# Expose the port that the Spring Boot application will run on
+EXPOSE 8080
+
+# Start the Spring Boot application
+CMD ["java", "-jar", "app.jar"]
