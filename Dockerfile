@@ -21,7 +21,7 @@ FROM openjdk:11
 WORKDIR /app
 
 # Copy the compiled JAR file from the builder stage
-COPY --from=builder /app/target/sudokuprime-1.0.0-SNAPSHOT.jar app.jar
+COPY --from=builder /target/sudokuprime-1.0.0-SNAPSHOT.jar app.jar
 
 # Expose the port that the Spring Boot application will run on
 EXPOSE 8080
