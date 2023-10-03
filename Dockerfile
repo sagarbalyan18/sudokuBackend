@@ -16,7 +16,7 @@ COPY ./src ./src
 RUN mvn clean install -Dmaven.test.skip=true
 #Stage 2
 # set base image for second stage
-FROM openjdk:11
+FROM openjdk:17
 # set deployment directory
 WORKDIR /opt/demo
 # copy over the built artifact from the maven image
