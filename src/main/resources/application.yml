@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://postgres1.cqjcsrxo1aks.us-east-1.rds.amazonaws.com/postgres
     username: postgres
-    password: postgres
+    password: izharbhai
   jpa:
     hibernate:
       ddl-auto: create
