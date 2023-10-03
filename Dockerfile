@@ -22,7 +22,7 @@ WORKDIR /opt/demo
 # copy over the built artifact from the maven image
 COPY --from=stage1 /opt/demo/target/sudokuprime-0.0.1-SNAPSHOT.jar app.jar
 
-EXPOSE 443
+EXPOSE 443 8085
 
 # Start the Spring Boot application
 CMD ["java", "-jar", "app.jar"]
