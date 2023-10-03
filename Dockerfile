@@ -20,7 +20,7 @@ FROM openjdk:11
 # set deployment directory
 WORKDIR /opt/demo
 # copy over the built artifact from the maven image
-COPY --from=stage1 /opt/demo/target/demo.jar app.jar
+COPY --from=stage1 /opt/demo/target/sudokuprime-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
