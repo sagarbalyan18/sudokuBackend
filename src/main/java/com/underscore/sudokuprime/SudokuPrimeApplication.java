@@ -1,5 +1,6 @@
 package com.underscore.sudokuprime;
 
+import com.underscore.sudokuprime.controllers.SocketIOController;
 import com.underscore.sudokuprime.firebase.FCMService;
 import com.underscore.sudokuprime.models.PushNotificationRequest;
 import com.underscore.sudokuprime.models.RoomModel;
@@ -32,9 +33,12 @@ public class SudokuPrimeApplication {
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
 
-	public SudokuPrimeApplication(UserRepository userRepository, RoomRepository roomRepository) {
+	private final SocketIOController socketIOController;
+
+	public SudokuPrimeApplication(UserRepository userRepository, RoomRepository roomRepository, SocketIOController socketIOController) {
 		this.userRepository = userRepository;
 		this.roomRepository = roomRepository;
+		this.socketIOController = socketIOController;
 	}
 
 	public static void main(String[] args) {
@@ -88,6 +92,7 @@ public class SudokuPrimeApplication {
 		room.setCreatorFcmToken(roomRequest.creatorFcmToken);
 		roomRepository.save(room);
 		Constant.USER_ONE = roomRequest.userId();
+		socketIOController.addUserEventListeners(Constant.USER_ONE);
 		return new CreateRoomResponse("success",room.getRoomId());
 	}
 
@@ -111,6 +116,7 @@ public class SudokuPrimeApplication {
 		pushNotificationRequest.setNotificationType(0);
 		pushNotificationRequest.setToken(room.getCreatorFcmToken());
 		Constant.USER_TWO = roomRequest.userId();
+		socketIOController.addUserEventListeners(Constant.USER_TWO);
 		try{
 			fcmService.sendMessageToToken(pushNotificationRequest);
 		} catch (java.lang.Exception e){
