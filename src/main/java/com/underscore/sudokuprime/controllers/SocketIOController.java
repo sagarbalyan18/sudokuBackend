@@ -8,9 +8,7 @@ import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.google.gson.Gson;
 import com.underscore.sudokuprime.models.UserStats;
-import com.underscore.sudokuprime.utils.Constant;
 import lombok.extern.log4j.Log4j2;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
