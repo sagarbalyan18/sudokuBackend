@@ -35,18 +35,17 @@ public class SocketIOController {
          * but we can create any number of listener
          * messageSendToUser is socket end point after socket connection user have to send message payload on messageSendToUser event
          */
-        this.socketServer.addEventListener(USER_ONE + "_stats", String.class, onSendMessage);
-        this.socketServer.addEventListener(Constant.USER_TWO + "_stats", String.class, onSendMessage);
     }
 
 
     public ConnectListener onUserConnectWithSocket = new ConnectListener() {
         @Override
         public void onConnect(SocketIOClient client) {
+            socketServer.addEventListener(USER_ONE + "_stats", String.class, onSendMessage);
+            socketServer.addEventListener(Constant.USER_TWO + "_stats", String.class, onSendMessage);
 //            log.info("Perform operation on user connect in controller");
         }
     };
-
 
     public DisconnectListener onUserDisconnectWithSocket = new DisconnectListener() {
         @Override

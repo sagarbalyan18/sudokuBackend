@@ -1,5 +1,6 @@
 package com.underscore.sudokuprime;
 
+import com.underscore.sudokuprime.callbacks.CreateJoinRoomCallback;
 import com.underscore.sudokuprime.firebase.FCMService;
 import com.underscore.sudokuprime.models.PushNotificationRequest;
 import com.underscore.sudokuprime.models.RoomModel;
@@ -7,6 +8,7 @@ import com.underscore.sudokuprime.models.UserModel;
 import com.underscore.sudokuprime.repository.RoomRepository;
 import com.underscore.sudokuprime.repository.UserRepository;
 import com.underscore.sudokuprime.utils.Constant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,9 +34,14 @@ public class SudokuPrimeApplication {
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
 
-	public SudokuPrimeApplication(UserRepository userRepository, RoomRepository roomRepository) {
+	@Autowired
+	private final CreateJoinRoomCallback createJoinRoomCallback;
+
+	public SudokuPrimeApplication(UserRepository userRepository, RoomRepository roomRepository, CreateJoinRoomCallback createJoinRoomCallback) {
 		this.userRepository = userRepository;
 		this.roomRepository = roomRepository;
+		this.createJoinRoomCallback = createJoinRoomCallback;
+		createJoinRoomCallback.onCreateRoom("234");
 	}
 
 	public static void main(String[] args) {
