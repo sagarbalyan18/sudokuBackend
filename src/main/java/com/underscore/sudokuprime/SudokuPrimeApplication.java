@@ -1,13 +1,15 @@
 package com.underscore.sudokuprime;
 
+import com.google.gson.JsonObject;
 import com.underscore.sudokuprime.callbacks.CreateJoinRoomCallback;
 import com.underscore.sudokuprime.firebase.FCMService;
-import com.underscore.sudokuprime.models.PushNotificationRequest;
-import com.underscore.sudokuprime.models.RoomModel;
-import com.underscore.sudokuprime.models.UserModel;
+import com.underscore.sudokuprime.models.*;
+import com.underscore.sudokuprime.repository.GroupRepository;
 import com.underscore.sudokuprime.repository.RoomRepository;
+import com.underscore.sudokuprime.repository.SettlementRepository;
 import com.underscore.sudokuprime.repository.UserRepository;
 import com.underscore.sudokuprime.utils.Constant;
+import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,9 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+
+import java.util.*;
 
 /* APIs
 * Get All users (/users)
@@ -33,15 +34,18 @@ public class SudokuPrimeApplication {
 
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
+	private final SettlementRepository settlementRepository;
+	private final GroupRepository groupRepository;
 
-	@Autowired
-	private final CreateJoinRoomCallback createJoinRoomCallback;
-
-	public SudokuPrimeApplication(UserRepository userRepository, RoomRepository roomRepository, CreateJoinRoomCallback createJoinRoomCallback) {
+	public SudokuPrimeApplication(UserRepository userRepository,
+								  RoomRepository roomRepository,
+								  SettlementRepository settlementRepository,
+								  GroupRepository groupRepository
+								  ) {
 		this.userRepository = userRepository;
 		this.roomRepository = roomRepository;
-		this.createJoinRoomCallback = createJoinRoomCallback;
-		createJoinRoomCallback.onCreateRoom("234");
+		this.settlementRepository = settlementRepository;
+		this.groupRepository = groupRepository;
 	}
 
 	public static void main(String[] args) {
@@ -73,15 +77,109 @@ public class SudokuPrimeApplication {
 		user.setName(userRequest.name);
 		user.setUserId(userRequest.userId);
 		user.setAge(userRequest.age);
-		user.setBadge(userRequest.badge);
 		user.setEmail(userRequest.email);
-		user.setTotalBoardPlayed(userRequest.totalBoardPlayed);
-		user.setBoardsSolved(userRequest.boardsSolved);
-		user.setRank(userRequest.rank);
-		user.setIsTop100(userRequest.isTop100);
 		user.setFcmToken(userRequest.fcmToken);
 		userRepository.save(user);
 		return new ApiStatus("success");
+	}
+
+	@PostMapping("/addSettlement")
+	public ApiStatus addSettlement(@RequestBody SettlementRequest settlementRequest){
+		SettlementModel settlement = new SettlementModel();
+		settlement.setDate(settlementRequest.date);
+		settlement.setPayerId(settlementRequest.payerId);
+		settlement.setPayerName(settlementRequest.payerName);
+		settlement.setPayeeId(settlementRequest.payeeId);
+		settlement.setPayeeName(settlementRequest.payeeName);
+		settlement.setAmount(settlementRequest.amount);
+		settlement.setGroupId(settlementRequest.groupId);
+		settlement.setDescription(settlementRequest.description);
+		settlement.setSplitRatio(settlementRequest.splitRatio);
+		settlementRepository.save(settlement);
+		return new ApiStatus("success");
+	}
+
+	@PostMapping("/getSettlement")
+	public List<SettlementModel> getUserSettlement(@RequestBody SettlementDetailsRequest request){
+		List<SettlementModel> settlementModel = settlementRepository.getSettlementByPayerId(request.payerId, request.payeeId);
+		return settlementModel;
+	}
+
+	@PostMapping("/getAllSettlement")
+	public List<SettlementModel> getAllSettlement(@RequestBody SettlementDetailsRequest request){
+		List<SettlementModel> settlementModel = settlementRepository.getAllSettlements(request.userId);
+		return settlementModel;
+	}
+
+	@PostMapping("/getSettlementFriends")
+	public List<SettlementFriendModel> getSettlementFriends(@RequestBody SettlementDetailsRequest request){
+		List<SettlementModel> settlementModelList = settlementRepository.getAllSettlements(request.userId);
+		Set<String> set = new HashSet<>();
+		List<SettlementFriendModel> result = new ArrayList<>();
+		HashMap resultObject = new HashMap();
+		for (SettlementModel settlement:  settlementModelList) {
+			if((!request.userId.equals(settlement.getPayeeId()) && set.add(settlement.getPayeeId()))){
+				System.out.println("request.userId!=settlement.getPayeeId()");
+				System.out.println(request.userId + ", " + settlement.getPayeeId());
+				resultObject.put(
+						settlement.getPayeeId(),
+						new SettlementFriendModel(
+								settlement.getPayeeName(),
+								settlement.getAmount(),
+								settlement.getPayeeId(),
+								settlement.getPayerId(),
+								settlement.getPayerName(),
+								settlement.getSplitRatio(),
+								settlement.getGroupId()
+						)
+				);
+			} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
+				System.out.println("request.userId!=settlement.getPayerId()");
+				System.out.println(request.userId + ", " + settlement.getPayerId());
+				resultObject.put(
+						settlement.getPayerId(),
+						new SettlementFriendModel(
+								settlement.getPayeeName(),
+								settlement.getAmount(),
+								settlement.getPayeeId(),
+								settlement.getPayerId(),
+								settlement.getPayerName(),
+								settlement.getSplitRatio(),
+								settlement.getGroupId()
+						)
+				);
+			}else {
+				//update the current list item
+				System.out.println("update the current list item");
+				if(!request.userId.equals(settlement.getPayeeId())){
+					SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayeeId());
+					System.out.println(settlementFriendModel.getPayeeId());
+					System.out.println(settlementFriendModel.getPayerId());
+					System.out.println(settlementFriendModel.getPayeeName());
+					System.out.println(settlementFriendModel.getPayerName());
+					System.out.println(settlementFriendModel.getAmount());
+					settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(settlement.getAmount()) + "");
+					resultObject.put(settlement.getPayeeId(), settlementFriendModel);
+				} else if(!request.userId.equals(settlement.getPayerId())){
+					SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
+					System.out.println(settlementFriendModel.getPayeeId());
+					System.out.println(settlementFriendModel.getPayerId());
+					System.out.println(settlementFriendModel.getPayeeName());
+					System.out.println(settlementFriendModel.getPayerName());
+					System.out.println(settlementFriendModel.getAmount());
+					settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(settlement.getAmount()) + "");
+					resultObject.put(settlement.getPayerId(), settlementFriendModel);
+				}
+			}
+		}
+		Iterator it = resultObject.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+			System.out.println(pair.getKey() + " = " + pair.getValue());
+			result.add((SettlementFriendModel) pair.getValue());
+			it.remove(); // avoids a ConcurrentModificationException
+		}
+		return result;
 	}
 
 	@PostMapping("/createRoom")
@@ -100,15 +198,21 @@ public class SudokuPrimeApplication {
 
 	@PostMapping("/getRoom")
 	public RoomModel getRoom(@RequestBody RoomIdRequest roomRequest){
-		//Send notification to the creator that a new user has joined
-		//find the fcmtoken of the creator -> by room id
 		return roomRepository.findByRoomId(roomRequest.roomId);
+	}
+
+	@PostMapping("/createGroup")
+	public ApiStatus createGroup(@RequestBody GroupRequest groupRequest){
+		GroupModel group = new GroupModel();
+		group.setGroupId(groupRequest.groupId);
+		group.setGroupName(groupRequest.groupName);
+		group.setMembers(groupRequest.groupMembers);
+		groupRepository.save(group);
+		return new ApiStatus("success");
 	}
 
 	@PostMapping("/joinRoom")
 	public RoomModel joinRoom(@RequestBody JoinRoomRequest roomRequest){
-		//Send notification to the creator that a new user has joined
-		//find the fcmtoken of the creator -> by room id
 		roomRepository.joinRoom(roomRequest.userId, roomRequest.roomId);
 		RoomModel room = roomRepository.findByRoomId(roomRequest.roomId);
 		FCMService fcmService = new FCMService();
@@ -138,13 +242,20 @@ public class SudokuPrimeApplication {
 			String isTop100,
 			String boardsSolved,
 			String totalBoardPlayed,
-			String fcmToken
+			String fcmToken,
+			String upi
 			){
 
 	}
 
     record Friend(String name) {
     }
+
+	record GroupRequest(
+			String groupId,
+			String groupName,
+			List<String> groupMembers) {
+	}
 
     record UserResult(
 			String name,
@@ -167,6 +278,12 @@ public class SudokuPrimeApplication {
 	record UserIdRequest(String userId, String creatorFcmToken) {
 	}
 
+	record SettlementDetailsRequest(
+			String userId,
+			String payerId,
+			String payeeId) {
+	}
+
 	record CreateRoomResponse(String status,
 							 String roomId) {
 	}
@@ -175,6 +292,18 @@ public class SudokuPrimeApplication {
 	}
 
 	record RoomIdRequest(String roomId) {
+	}
+
+	record SettlementRequest(String date,
+							 String payerId,
+							 String payeeId,
+							 String payerName,
+							 String payeeName,
+							 String amount,
+							 String groupId,
+							 String description,
+							 String splitRatio
+							 ) {
 	}
 
 	record ApiStatus(String status) {}

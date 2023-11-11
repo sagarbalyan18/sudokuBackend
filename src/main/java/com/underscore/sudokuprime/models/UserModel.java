@@ -13,13 +13,10 @@ public class UserModel {
     private String userId;
     private String age;
     private String email;
-    private String badge;
-    private String rank;
-    private String isTop100;
-    private String boardsSolved;
-    private String totalBoardPlayed;
     private String fcmToken;
     private String status;
+    private String upi;
+    private String totalAmount;
 
     public UserModel() {
     }
@@ -28,26 +25,22 @@ public class UserModel {
                      String userId,
                      String age,
                      String email,
-                     String badge,
-                     String rank,
-                     String isTop100,
-                     String boardsSolved,
-                     String totalBoardPlayed,
-                     String fcmToken) {
+                     String fcmToken,
+                     String upi
+    ) {
         this.name = name;
         this.userId = userId;
         this.age = age;
         this.email = email;
-        this.badge = badge;
-        this.rank = rank;
-        this.isTop100 = isTop100;
-        this.boardsSolved = boardsSolved;
-        this.totalBoardPlayed = totalBoardPlayed;
         this.fcmToken = fcmToken;
+        this.upi = upi;
     }
 
     public String getName() {
         return name;
+    }
+    public String getUpi() {
+        return upi;
     }
 
     public void setName(String name) {
@@ -78,46 +71,6 @@ public class UserModel {
         this.email = email;
     }
 
-    public String getBadge() {
-        return badge;
-    }
-
-    public void setBadge(String badge) {
-        this.badge = badge;
-    }
-
-    public String getRank() {
-        return rank;
-    }
-
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
-
-    public String getIsTop100() {
-        return isTop100;
-    }
-
-    public void setIsTop100(String isTop100) {
-        this.isTop100 = isTop100;
-    }
-
-    public String getBoardsSolved() {
-        return boardsSolved;
-    }
-
-    public void setBoardsSolved(String boardsSolved) {
-        this.boardsSolved = boardsSolved;
-    }
-
-    public String getTotalBoardPlayed() {
-        return totalBoardPlayed;
-    }
-
-    public void setTotalBoardPlayed(String totalBoardPlayed) {
-        this.totalBoardPlayed = totalBoardPlayed;
-    }
-
     public String getFcmToken() {
         return fcmToken;
     }
@@ -132,5 +85,16 @@ public class UserModel {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    public void setUpi(String upi) {
+        this.upi = upi;
+    }
+
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }
