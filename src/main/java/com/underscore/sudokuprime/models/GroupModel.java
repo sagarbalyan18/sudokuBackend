@@ -13,7 +13,7 @@ public class GroupModel {
     private String groupName;
     @Column(unique = true)
     private String groupId;
-    private List<String> members;
+    private String members;
 
     public String getGroupName() {
         return groupName;
@@ -31,11 +31,11 @@ public class GroupModel {
         this.groupId = groupId;
     }
 
-    public List<String> getMembers() {
+    public String getMembers() {
         return members;
     }
 
-    public void setMembers(List<String> members) {
+    public void setMembers(String members) {
         this.members = members;
     }
 }

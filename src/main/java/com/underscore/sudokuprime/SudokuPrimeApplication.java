@@ -182,33 +182,24 @@ public class SudokuPrimeApplication {
 		return result;
 	}
 
-	@PostMapping("/createRoom")
-	public CreateRoomResponse createRoom(@RequestBody UserIdRequest roomRequest){
-		RoomModel room = new RoomModel();
-		Random rand = new Random();
-		int boardNumber = rand.nextInt(0,15);
-		room.setRoomId(UUID.randomUUID().toString().substring(0,6));
-		room.setUserOne(roomRequest.userId);
-		room.setBoardNo(String.valueOf(boardNumber));
-		room.setCreatorFcmToken(roomRequest.creatorFcmToken);
-		roomRepository.save(room);
-		Constant.USER_ONE = roomRequest.userId();
-		return new CreateRoomResponse("success",room.getRoomId());
-	}
-
-	@PostMapping("/getRoom")
-	public RoomModel getRoom(@RequestBody RoomIdRequest roomRequest){
-		return roomRepository.findByRoomId(roomRequest.roomId);
-	}
-
 	@PostMapping("/createGroup")
 	public ApiStatus createGroup(@RequestBody GroupRequest groupRequest){
 		GroupModel group = new GroupModel();
 		group.setGroupId(groupRequest.groupId);
 		group.setGroupName(groupRequest.groupName);
-		group.setMembers(groupRequest.groupMembers);
+		group.setMembers(groupRequest.members);
 		groupRepository.save(group);
 		return new ApiStatus("success");
+	}
+
+	@PostMapping("/getGroupDetails")
+	public GroupModel getGroupDetails(@RequestBody GroupIdRequest groupIdRequest){
+		return groupRepository.findByGroupId(groupIdRequest.groupId);
+	}
+
+	@PostMapping("/getUserGroups")
+	public List<GroupModel> getUserGroups(@RequestBody UserIdRequest userIdRequest){
+		return groupRepository.findByMembersContaining(userIdRequest.userId);
 	}
 
 	@PostMapping("/joinRoom")
@@ -254,7 +245,7 @@ public class SudokuPrimeApplication {
 	record GroupRequest(
 			String groupId,
 			String groupName,
-			List<String> groupMembers) {
+			String members) {
 	}
 
     record UserResult(
@@ -276,6 +267,9 @@ public class SudokuPrimeApplication {
     }
 
 	record UserIdRequest(String userId, String creatorFcmToken) {
+	}
+
+	record GroupIdRequest(String groupId) {
 	}
 
 	record SettlementDetailsRequest(
@@ -311,5 +305,24 @@ public class SudokuPrimeApplication {
 	record Exception(String status, String message) {}
 
 	/* Firebase */
+
+	/*	@PostMapping("/createRoom")
+	public CreateRoomResponse createRoom(@RequestBody UserIdRequest roomRequest){
+		RoomModel room = new RoomModel();
+		Random rand = new Random();
+		int boardNumber = rand.nextInt(0,15);
+		room.setRoomId(UUID.randomUUID().toString().substring(0,6));
+		room.setUserOne(roomRequest.userId);
+		room.setBoardNo(String.valueOf(boardNumber));
+		room.setCreatorFcmToken(roomRequest.creatorFcmToken);
+		roomRepository.save(room);
+		Constant.USER_ONE = roomRequest.userId();
+		return new CreateRoomResponse("success",room.getRoomId());
+	}
+
+	@PostMapping("/getRoom")
+	public RoomModel getRoom(@RequestBody RoomIdRequest roomRequest){
+		return roomRepository.findByRoomId(roomRequest.roomId);
+	}*/
 
 }
