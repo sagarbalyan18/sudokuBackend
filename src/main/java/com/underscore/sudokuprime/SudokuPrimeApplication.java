@@ -105,6 +105,12 @@ public class SudokuPrimeApplication {
 		return settlementModel;
 	}
 
+	@PostMapping("/getGroupSettlements")
+	public List<SettlementModel> getGroupSettlements(@RequestBody GroupIdRequest groupIdRequest){
+		List<SettlementModel> settlementModel = settlementRepository.getSettlementsByGroupId(groupIdRequest.groupId);
+		return settlementModel;
+	}
+
 	@PostMapping("/getAllSettlement")
 	public List<SettlementModel> getAllSettlement(@RequestBody SettlementDetailsRequest request){
 		List<SettlementModel> settlementModel = settlementRepository.getAllSettlements(request.userId);

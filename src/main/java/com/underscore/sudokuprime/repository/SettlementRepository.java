@@ -14,4 +14,6 @@ public interface SettlementRepository extends JpaRepository<SettlementModel,Inte
     @Query(value = "SELECT * FROM settlement_model WHERE payer_id=?1 or payee_id=?1",nativeQuery = true)
     List<SettlementModel> getAllSettlements(String userId);
 
+    List<SettlementModel> getSettlementsByGroupId(String groupId);
+
 }
