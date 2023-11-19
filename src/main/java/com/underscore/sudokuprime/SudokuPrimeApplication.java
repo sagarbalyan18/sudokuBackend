@@ -124,7 +124,7 @@ public class SudokuPrimeApplication {
 		for (SettlementModel settlement:  settlementModelList) {
 			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",") ){
 				//It's an expense from the group
-				if(settlement.getPayeeId().contains(",")){
+				if(settlement.getPayeeId().contains(",") && settlement.getPayeeName().contains(",")){
 					//There are multiple payees
 					List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
 					List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
