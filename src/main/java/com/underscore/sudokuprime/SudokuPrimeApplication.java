@@ -1,7 +1,5 @@
 package com.underscore.sudokuprime;
 
-import com.google.gson.JsonObject;
-import com.underscore.sudokuprime.callbacks.CreateJoinRoomCallback;
 import com.underscore.sudokuprime.firebase.FCMService;
 import com.underscore.sudokuprime.models.*;
 import com.underscore.sudokuprime.repository.GroupRepository;
@@ -9,8 +7,7 @@ import com.underscore.sudokuprime.repository.RoomRepository;
 import com.underscore.sudokuprime.repository.SettlementRepository;
 import com.underscore.sudokuprime.repository.UserRepository;
 import com.underscore.sudokuprime.utils.Constant;
-import netscape.javascript.JSObject;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +25,7 @@ import java.util.*;
 * Join a room (/joinRoom)
 * */
 
+@Slf4j
 @SpringBootApplication
 @RestController
 public class SudokuPrimeApplication {
@@ -124,60 +122,72 @@ public class SudokuPrimeApplication {
 		List<SettlementFriendModel> result = new ArrayList<>();
 		HashMap resultObject = new HashMap();
 		for (SettlementModel settlement:  settlementModelList) {
-			if((!request.userId.equals(settlement.getPayeeId()) && set.add(settlement.getPayeeId()))){
-				System.out.println("request.userId!=settlement.getPayeeId()");
-				System.out.println(request.userId + ", " + settlement.getPayeeId());
-				resultObject.put(
-						settlement.getPayeeId(),
-						new SettlementFriendModel(
-								settlement.getPayeeName(),
-								settlement.getAmount(),
-								settlement.getPayeeId(),
-								settlement.getPayerId(),
-								settlement.getPayerName(),
-								settlement.getSplitRatio(),
-								settlement.getGroupId()
-						)
-				);
-			} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
-				System.out.println("request.userId!=settlement.getPayerId()");
-				System.out.println(request.userId + ", " + settlement.getPayerId());
-				resultObject.put(
-						settlement.getPayerId(),
-						new SettlementFriendModel(
-								settlement.getPayeeName(),
-								settlement.getAmount(),
-								settlement.getPayeeId(),
-								settlement.getPayerId(),
-								settlement.getPayerName(),
-								settlement.getSplitRatio(),
-								settlement.getGroupId()
-						)
-				);
-			}else {
-				//update the current list item
-				System.out.println("update the current list item");
-				if(!request.userId.equals(settlement.getPayeeId())){
-					SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayeeId());
-					System.out.println(settlementFriendModel.getPayeeId());
-					System.out.println(settlementFriendModel.getPayerId());
-					System.out.println(settlementFriendModel.getPayeeName());
-					System.out.println(settlementFriendModel.getPayerName());
-					System.out.println(settlementFriendModel.getAmount());
-					settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(settlement.getAmount()) + "");
-					resultObject.put(settlement.getPayeeId(), settlementFriendModel);
-				} else if(!request.userId.equals(settlement.getPayerId())){
-					SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
-					System.out.println(settlementFriendModel.getPayeeId());
-					System.out.println(settlementFriendModel.getPayerId());
-					System.out.println(settlementFriendModel.getPayeeName());
-					System.out.println(settlementFriendModel.getPayerName());
-					System.out.println(settlementFriendModel.getAmount());
-					settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(settlement.getAmount()) + "");
-					resultObject.put(settlement.getPayerId(), settlementFriendModel);
+			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",") ){
+				//It's an expense from the group
+				if(settlement.getPayeeId().contains(",")){
+					//There are multiple payees
+					List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
+					List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
+					log.info("amount: " + String.valueOf(Integer.parseInt(settlement.getAmount())/ payeesIdList.size()));
+					for(int i=0; i< payeesIdList.size(); i++){
+						prepareResultMap(request,
+								settlement,
+								set,
+								resultObject,
+								payeesIdList.get(i),
+								payeesNameList.get(i),
+								String.valueOf(Integer.parseInt(settlement.getAmount())/ payeesIdList.size())
+								);
+					}
+
+				} else if(settlement.getPayerId().contains(",")){
+					//There are multiple payers - TODO later as this is less common
 				}
+			} else {
+				prepareResultMap(request, settlement, set, resultObject,
+						settlement.getPayeeId(),
+						settlement.getPayeeName(),
+						settlement.getAmount()
+				);
 			}
 		}
+		return getListFromMap(resultObject, result);
+	}
+
+	private void prepareResultMap(SettlementDetailsRequest request,
+								  SettlementModel settlement,
+								  Set<String> set,
+								  HashMap resultObject,
+								  String payeeId,
+								  String payeeName,
+								  String amount
+								  ){
+		if((!request.userId.equals(settlement.getPayeeId()) && set.add(payeeId))){
+			resultObject.put(
+					payeeId,
+					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
+			);
+		} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
+			resultObject.put(
+					settlement.getPayerId(),
+					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
+			);
+		}else {
+			//update the current list item
+			System.out.println("update the current list item");
+			if(!request.userId.equals(payeeId)){
+				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
+				settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(amount) + "");
+				resultObject.put(payeeId, settlementFriendModel);
+			} else if(!request.userId.equals(settlement.getPayerId())){
+				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
+				settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(amount) + "");
+				resultObject.put(settlement.getPayerId(), settlementFriendModel);
+			}
+		}
+	}
+
+	private List<SettlementFriendModel> getListFromMap(HashMap resultObject, List<SettlementFriendModel> result) {
 		Iterator it = resultObject.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry)it.next();
@@ -186,6 +196,18 @@ public class SudokuPrimeApplication {
 			it.remove(); // avoids a ConcurrentModificationException
 		}
 		return result;
+	}
+
+	private SettlementFriendModel getSettlementFriendObject(SettlementModel settlement, String payeeId, String payeeName, String amount) {
+		return new SettlementFriendModel(
+				payeeName,
+				amount,
+				payeeId,
+				settlement.getPayerId(),
+				settlement.getPayerName(),
+				settlement.getSplitRatio(),
+				settlement.getGroupId()
+		);
 	}
 
 	@PostMapping("/createGroup")
