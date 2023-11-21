@@ -14,13 +14,14 @@ public class SettlementModel {
     private String payeeName;
     private String description;
     private String groupId;
-    private String splitRatio;
+    private double splitRatio;
+    private double amount;
 
-    public String getSplitRatio() {
+    public double getSplitRatio() {
         return splitRatio;
     }
 
-    public void setSplitRatio(String splitRatio) {
+    public void setSplitRatio(double splitRatio) {
         this.splitRatio = splitRatio;
     }
 
@@ -39,8 +40,6 @@ public class SettlementModel {
     public void setPayeeName(String payeeName) {
         this.payeeName = payeeName;
     }
-
-    private String amount;
 
     public String getDate() {
         return date;
@@ -66,11 +65,11 @@ public class SettlementModel {
         this.payeeId = payeeId;
     }
 
-    public String getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

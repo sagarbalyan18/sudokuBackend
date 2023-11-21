@@ -77,6 +77,7 @@ public class SudokuPrimeApplication {
 		user.setAge(userRequest.age);
 		user.setEmail(userRequest.email);
 		user.setFcmToken(userRequest.fcmToken);
+		user.setUpi(userRequest.upi);
 		userRepository.save(user);
 		return new ApiStatus("success");
 	}
@@ -128,7 +129,7 @@ public class SudokuPrimeApplication {
 					//There are multiple payees
 					List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
 					List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
-					log.info("amount: " + String.valueOf(Integer.parseInt(settlement.getAmount())/ payeesIdList.size()));
+					log.info("amount: " + settlement.getAmount()/ payeesIdList.size());
 					for(int i=0; i< payeesIdList.size(); i++){
 						prepareResultMap(request,
 								settlement,
@@ -136,7 +137,7 @@ public class SudokuPrimeApplication {
 								resultObject,
 								payeesIdList.get(i),
 								payeesNameList.get(i),
-								String.valueOf(Integer.parseInt(settlement.getAmount())/ payeesIdList.size())
+								settlement.getAmount()/ payeesIdList.size()
 								);
 					}
 
@@ -160,7 +161,7 @@ public class SudokuPrimeApplication {
 								  HashMap resultObject,
 								  String payeeId,
 								  String payeeName,
-								  String amount
+								  double amount
 								  ){
 		if((!request.userId.equals(settlement.getPayeeId()) && set.add(payeeId))){
 			resultObject.put(
@@ -177,11 +178,11 @@ public class SudokuPrimeApplication {
 			System.out.println("update the current list item");
 			if(!request.userId.equals(payeeId)){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
-				settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(amount) + "");
+				settlementFriendModel.setAmount(settlementFriendModel.getAmount()+amount);
 				resultObject.put(payeeId, settlementFriendModel);
 			} else if(!request.userId.equals(settlement.getPayerId())){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
-				settlementFriendModel.setAmount(Integer.parseInt(settlementFriendModel.getAmount())+Integer.parseInt(amount) + "");
+				settlementFriendModel.setAmount(settlementFriendModel.getAmount()-amount);
 				resultObject.put(settlement.getPayerId(), settlementFriendModel);
 			}
 		}
@@ -198,7 +199,7 @@ public class SudokuPrimeApplication {
 		return result;
 	}
 
-	private SettlementFriendModel getSettlementFriendObject(SettlementModel settlement, String payeeId, String payeeName, String amount) {
+	private SettlementFriendModel getSettlementFriendObject(SettlementModel settlement, String payeeId, String payeeName, double amount) {
 		return new SettlementFriendModel(
 				payeeName,
 				amount,
@@ -321,10 +322,10 @@ public class SudokuPrimeApplication {
 							 String payeeId,
 							 String payerName,
 							 String payeeName,
-							 String amount,
+							 double amount,
 							 String groupId,
 							 String description,
-							 String splitRatio
+							 double splitRatio
 							 ) {
 	}
 

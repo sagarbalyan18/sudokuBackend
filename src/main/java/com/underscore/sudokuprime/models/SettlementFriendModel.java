@@ -15,18 +15,18 @@ public class SettlementFriendModel {
     private String payeeId;
     private String payerId;
     private String payerName;
-    private String amount;
+    private double amount;
     private String nextAutoReminder;
-    private String splitRatio;
+    private double splitRatio;
     private String groupId;
 
 
     public SettlementFriendModel(String payeeNme,
-                                 String amount,
+                                 double amount,
                                  String payeeId,
                                  String payerId,
                                  String payerName,
-                                 String splitRatio,
+                                 double splitRatio,
                                  String groupId
                                  ) {
         this.payeeName = payeeNme;
@@ -38,11 +38,11 @@ public class SettlementFriendModel {
         this.groupId = groupId;
     }
 
-    public String getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -87,11 +87,11 @@ public class SettlementFriendModel {
         this.payerName = payerName;
     }
 
-    public String getSplitRatio() {
+    public double getSplitRatio() {
         return splitRatio;
     }
 
-    public void setSplitRatio(String splitRatio) {
+    public void setSplitRatio(double splitRatio) {
         this.splitRatio = splitRatio;
     }
 
