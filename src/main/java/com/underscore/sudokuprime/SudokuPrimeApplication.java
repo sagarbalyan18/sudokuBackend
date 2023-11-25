@@ -104,6 +104,34 @@ public class SudokuPrimeApplication {
 		return settlementModel;
 	}
 
+	@PostMapping("/editSettlement")
+	public ApiStatus editSettlement(@RequestBody EditSettlementRequest request){
+		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.pKey)).orElse(null);
+		if(settlement!=null){
+			log.info("Settlement found");
+			settlement.setDate(request.date);
+			settlement.setAmount(request.amount);
+			settlement.setDescription(request.description);
+			settlement.setSplitRatio(request.splitRatio);
+			settlementRepository.save(settlement);
+			return new ApiStatus("success");
+		} else {
+			return new ApiStatus("failure");
+		}
+	}
+
+	@PostMapping("/deleteSettlement")
+	public ApiStatus deleteSettlement(@RequestBody SettlementIdRequest request){
+		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.id)).orElse(null);
+		if(settlement!=null){
+			log.info("Settlement found");
+			settlementRepository.delete(settlement);
+			return new ApiStatus("success");
+		} else {
+			return new ApiStatus("failure");
+		}
+	}
+
 	@PostMapping("/getGroupSettlements")
 	public List<SettlementModel> getGroupSettlements(@RequestBody GroupIdRequest groupIdRequest){
 		List<SettlementModel> settlementModel = settlementRepository.getSettlementsByGroupId(groupIdRequest.groupId);
@@ -271,6 +299,9 @@ public class SudokuPrimeApplication {
     record Friend(String name) {
     }
 
+	record SettlementIdRequest(String id) {
+	}
+
 	record GroupRequest(
 			String groupId,
 			String groupName,
@@ -306,6 +337,15 @@ public class SudokuPrimeApplication {
 			String payerId,
 			String payeeId) {
 	}
+
+	record EditSettlementRequest(
+			double amount,
+			String description,
+			String date,
+			double splitRatio,
+			String pKey
+	){}
+
 
 	record CreateRoomResponse(String status,
 							 String roomId) {
