@@ -78,6 +78,7 @@ public class SudokuPrimeApplication {
 		user.setEmail(userRequest.email);
 		user.setFcmToken(userRequest.fcmToken);
 		user.setUpi(userRequest.upi);
+		user.setUserPic(userRequest.userPic);
 		userRepository.save(user);
 		return new ApiStatus("success");
 	}
@@ -94,6 +95,7 @@ public class SudokuPrimeApplication {
 		settlement.setGroupId(settlementRequest.groupId);
 		settlement.setDescription(settlementRequest.description);
 		settlement.setSplitRatio(settlementRequest.splitRatio);
+		settlement.setSettled(false);
 		settlementRepository.save(settlement);
 		return new ApiStatus("success");
 	}
@@ -108,11 +110,12 @@ public class SudokuPrimeApplication {
 	public ApiStatus editSettlement(@RequestBody EditSettlementRequest request){
 		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.pKey)).orElse(null);
 		if(settlement!=null){
-			log.info("Settlement found");
+			System.out.println("Settlement found");
 			settlement.setDate(request.date);
 			settlement.setAmount(request.amount);
 			settlement.setDescription(request.description);
 			settlement.setSplitRatio(request.splitRatio);
+			settlement.setSettled(request.isSettled);
 			settlementRepository.save(settlement);
 			return new ApiStatus("success");
 		} else {
@@ -124,7 +127,7 @@ public class SudokuPrimeApplication {
 	public ApiStatus deleteSettlement(@RequestBody SettlementIdRequest request){
 		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.id)).orElse(null);
 		if(settlement!=null){
-			log.info("Settlement found");
+			System.out.println("Settlement found");
 			settlementRepository.delete(settlement);
 			return new ApiStatus("success");
 		} else {
@@ -157,7 +160,7 @@ public class SudokuPrimeApplication {
 					//There are multiple payees
 					List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
 					List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
-					log.info("amount: " + settlement.getAmount()/ payeesIdList.size());
+					System.out.println("amount: " + settlement.getAmount()/ payeesIdList.size());
 					for(int i=0; i< payeesIdList.size(); i++){
 						prepareResultMap(request,
 								settlement,
@@ -291,7 +294,8 @@ public class SudokuPrimeApplication {
 			String boardsSolved,
 			String totalBoardPlayed,
 			String fcmToken,
-			String upi
+			String upi,
+			String userPic
 			){
 
 	}
@@ -343,6 +347,7 @@ public class SudokuPrimeApplication {
 			String description,
 			String date,
 			double splitRatio,
+			boolean isSettled,
 			String pKey
 	){}
 

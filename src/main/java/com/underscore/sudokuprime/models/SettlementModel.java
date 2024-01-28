@@ -16,6 +16,7 @@ public class SettlementModel {
     private String groupId;
     private double splitRatio;
     private double amount;
+    private boolean isSettled;
 
     public double getSplitRatio() {
         return splitRatio;
@@ -91,5 +92,13 @@ public class SettlementModel {
 
     public long getpKey() {
         return pKey;
+    }
+
+    public boolean isSettled() {
+        return isSettled;
+    }
+
+    public void setSettled(boolean settled) {
+        isSettled = settled;
     }
 }

@@ -17,6 +17,7 @@ public class UserModel {
     private String status;
     private String upi;
     private String totalAmount;
+    private String userPic;
 
     public UserModel() {
     }
@@ -96,5 +97,13 @@ public class UserModel {
 
     public void setTotalAmount(String totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getUserPic() {
+        return userPic;
+    }
+
+    public void setUserPic(String userPic) {
+        this.userPic = userPic;
     }
 }
