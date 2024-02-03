@@ -13,6 +13,7 @@ public class SettlementModel {
     private String payeeId;
     private String payeeName;
     private String description;
+    private String category;
     private String groupId;
     private double splitRatio;
     private double amount;
@@ -100,5 +101,13 @@ public class SettlementModel {
 
     public void setSettled(boolean settled) {
         isSettled = settled;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -94,6 +94,7 @@ public class SudokuPrimeApplication {
 		settlement.setAmount(settlementRequest.amount);
 		settlement.setGroupId(settlementRequest.groupId);
 		settlement.setDescription(settlementRequest.description);
+		settlement.setCategory(settlementRequest.category);
 		settlement.setSplitRatio(settlementRequest.splitRatio);
 		settlement.setSettled(false);
 		settlementRepository.save(settlement);
@@ -116,6 +117,7 @@ public class SudokuPrimeApplication {
 			settlement.setDescription(request.description);
 			settlement.setSplitRatio(request.splitRatio);
 			settlement.setSettled(request.isSettled);
+			settlement.setCategory(request.category);
 			settlementRepository.save(settlement);
 			return new ApiStatus("success");
 		} else {
@@ -345,6 +347,7 @@ public class SudokuPrimeApplication {
 	record EditSettlementRequest(
 			double amount,
 			String description,
+			String category,
 			String date,
 			double splitRatio,
 			boolean isSettled,
@@ -370,6 +373,7 @@ public class SudokuPrimeApplication {
 							 double amount,
 							 String groupId,
 							 String description,
+							 String category,
 							 double splitRatio
 							 ) {
 	}
