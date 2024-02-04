@@ -112,7 +112,6 @@ public class SudokuPrimeApplication {
 		UserModel user = userRepository.getUserByUserId(userRequest.userId);
 		if(user!=null){
 			user.setName(userRequest.name);
-			user.setUserId(userRequest.userId);
 			user.setEmail(userRequest.email);
 			user.setUpi(userRequest.upi);
 			user.setUserPic(userRequest.userPic);
