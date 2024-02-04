@@ -18,6 +18,7 @@ public class SettlementModel {
     private double splitRatio;
     private double amount;
     private boolean isSettled;
+    private String bill;
 
     public double getSplitRatio() {
         return splitRatio;
@@ -109,5 +110,13 @@ public class SettlementModel {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getBill() {
+        return bill;
+    }
+
+    public void setBill(String bill) {
+        this.bill = bill;
     }
 }
