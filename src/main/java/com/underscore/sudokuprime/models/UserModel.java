@@ -17,6 +17,7 @@ public class UserModel {
     private String status;
     private String upi;
     private String totalAmount;
+    @Column(length = Integer.MAX_VALUE)
     private String userPic;
 
     public UserModel() {

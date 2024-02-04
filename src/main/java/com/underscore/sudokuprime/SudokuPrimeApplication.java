@@ -80,7 +80,7 @@ public class SudokuPrimeApplication {
 		user.setUpi(userRequest.upi);
 		user.setUserPic(userRequest.userPic);
 		userRepository.save(user);
-		return new ApiStatus("success");
+		return new ApiStatus("success", "Successfully processed request.");
 	}
 
 	@PostMapping("/addSettlement")
@@ -98,13 +98,29 @@ public class SudokuPrimeApplication {
 		settlement.setSplitRatio(settlementRequest.splitRatio);
 		settlement.setSettled(false);
 		settlementRepository.save(settlement);
-		return new ApiStatus("success");
+		return new ApiStatus("success", "Successfully processed request.");
 	}
 
 	@PostMapping("/getSettlement")
 	public List<SettlementModel> getUserSettlement(@RequestBody SettlementDetailsRequest request){
 		List<SettlementModel> settlementModel = settlementRepository.getSettlementByPayerId(request.payerId, request.payeeId);
 		return settlementModel;
+	}
+
+	@PostMapping("/editUser")
+	public ApiStatus editUser(@RequestBody EditUserRequest userRequest){
+		UserModel user = userRepository.getUserByUserId(userRequest.userId);
+		if(user!=null){
+			user.setName(userRequest.name);
+			user.setUserId(userRequest.userId);
+			user.setEmail(userRequest.email);
+			user.setUpi(userRequest.upi);
+			user.setUserPic(userRequest.userPic);
+			userRepository.save(user);
+			return new ApiStatus("success", "Successfully processed request.");
+		} else {
+			return new ApiStatus("failure", "User doesn't exist");
+		}
 	}
 
 	@PostMapping("/editSettlement")
@@ -119,9 +135,9 @@ public class SudokuPrimeApplication {
 			settlement.setSettled(request.isSettled);
 			settlement.setCategory(request.category);
 			settlementRepository.save(settlement);
-			return new ApiStatus("success");
+			return new ApiStatus("success", "Successfully processed request.");
 		} else {
-			return new ApiStatus("failure");
+			return new ApiStatus("failure", "User doesn't exist");
 		}
 	}
 
@@ -131,9 +147,9 @@ public class SudokuPrimeApplication {
 		if(settlement!=null){
 			System.out.println("Settlement found");
 			settlementRepository.delete(settlement);
-			return new ApiStatus("success");
+			return new ApiStatus("success", "Successfully processed request.");
 		} else {
-			return new ApiStatus("failure");
+			return new ApiStatus("failure", "Settlement processed request.");
 		}
 	}
 
@@ -251,7 +267,7 @@ public class SudokuPrimeApplication {
 		group.setGroupName(groupRequest.groupName);
 		group.setMembers(groupRequest.members);
 		groupRepository.save(group);
-		return new ApiStatus("success");
+		return new ApiStatus("success", "Successfully processed request.");
 	}
 
 	@PostMapping("/getGroupDetails")
@@ -299,6 +315,16 @@ public class SudokuPrimeApplication {
 			String upi,
 			String userPic
 			){
+
+	}
+
+	record EditUserRequest(
+			String userId,
+			String name,
+			String email,
+			String upi,
+			String userPic
+	){
 
 	}
 
@@ -378,7 +404,7 @@ public class SudokuPrimeApplication {
 							 ) {
 	}
 
-	record ApiStatus(String status) {}
+	record ApiStatus(String status, String message) {}
 
 	record Exception(String status, String message) {}
 
