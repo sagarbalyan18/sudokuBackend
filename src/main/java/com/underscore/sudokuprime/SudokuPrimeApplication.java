@@ -195,10 +195,11 @@ public class SudokuPrimeApplication {
 					//There are multiple payers - TODO later as this is less common
 				}
 			} else {
+				//It's an individual expense
 				prepareResultMap(request, settlement, set, resultObject,
 						settlement.getPayeeId(),
 						settlement.getPayeeName(),
-						settlement.getAmount()
+						settlement.getAmount()*settlement.getSplitRatio()
 				);
 			}
 		}
@@ -214,25 +215,27 @@ public class SudokuPrimeApplication {
 								  double amount
 								  ){
 		if((!request.userId.equals(settlement.getPayeeId()) && set.add(payeeId))){
+			//Add new entry in the map
 			resultObject.put(
 					payeeId,
 					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
 			);
 		} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
+			//Add new entry in the map
 			resultObject.put(
 					settlement.getPayerId(),
 					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
 			);
 		}else {
-			//update the current list item
+			//update the current list item in the map
 			System.out.println("update the current list item");
 			if(!request.userId.equals(payeeId)){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
-				settlementFriendModel.setAmount(settlementFriendModel.getAmount()+amount);
+				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount);
 				resultObject.put(payeeId, settlementFriendModel);
 			} else if(!request.userId.equals(settlement.getPayerId())){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
-				settlementFriendModel.setAmount(settlementFriendModel.getAmount()-amount);
+				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount);
 				resultObject.put(settlement.getPayerId(), settlementFriendModel);
 			}
 		}

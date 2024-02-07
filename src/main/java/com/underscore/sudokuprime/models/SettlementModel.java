@@ -18,6 +18,7 @@ public class SettlementModel {
     private double splitRatio;
     private double amount;
     private boolean isSettled;
+    @Column(length = Integer.MAX_VALUE)
     private String bill;
 
     public double getSplitRatio() {
