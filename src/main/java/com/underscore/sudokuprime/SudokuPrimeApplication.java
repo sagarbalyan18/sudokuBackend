@@ -160,6 +160,7 @@ public class SudokuPrimeApplication {
 		List<SettlementModel> settlementList = settlementRepository.getSettlementByPayerId(request.payerId, request.payeeId);
 		for(SettlementModel settlement: settlementList){
 			settlement.setSettled(true);
+			settlementRepository.save(settlement);
 		}
 		return new ApiStatus("success", "Successfully processed request.");
 	}
