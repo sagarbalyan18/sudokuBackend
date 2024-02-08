@@ -198,7 +198,7 @@ public class SudokuPrimeApplication {
 				}
 			} else {
 				//It's an individual expense (i.e.e Not a group expense)
-				System.out.println("First expense: " + settlement.getAmount()*settlement.getSplitRatio());
+				System.out.println("New expense: " + settlement.getAmount()*settlement.getSplitRatio());
 				prepareResultMap(request, settlement, set, resultObject,
 						settlement.getPayeeId(),
 						settlement.getPayeeName(),
@@ -224,6 +224,7 @@ public class SudokuPrimeApplication {
 					payeeId,
 					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
 			);
+			System.out.println("resultObject.put:" + payeeId + ": " + amount);
 		} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
 			//This user has not been added in the map so add it
 			//Requesting User did not pay
@@ -231,18 +232,19 @@ public class SudokuPrimeApplication {
 					settlement.getPayerId(),
 					getSettlementFriendObject(settlement, payeeId, payeeName, -amount)
 			);
+			System.out.println("resultObject.put:" + payeeId + ": " + amount);
 		}else {
 			//update the current user details in the map with the new expense
 			System.out.println("update the current list item");
 			if (!request.userId.equals(payeeId)) {
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount);
-				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "+" + amount);
+				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "+" + amount +  "=" + (settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount));
 				resultObject.put(payeeId, settlementFriendModel);
 			} else if(!request.userId.equals(settlement.getPayerId())){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount);
-				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "-" + amount);
+				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "-" + amount +  "=" + (settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount));
 				resultObject.put(settlement.getPayerId(), settlementFriendModel);
 			}
 		}
