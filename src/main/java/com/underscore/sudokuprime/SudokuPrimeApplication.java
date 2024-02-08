@@ -7,6 +7,7 @@ import com.underscore.sudokuprime.repository.RoomRepository;
 import com.underscore.sudokuprime.repository.SettlementRepository;
 import com.underscore.sudokuprime.repository.UserRepository;
 import com.underscore.sudokuprime.utils.Constant;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -195,6 +196,7 @@ public class SudokuPrimeApplication {
 					//There are multiple payers - TODO later as this is less common
 				}
 			} else {
+				System.out.println("First expense: " + settlement.getAmount()*settlement.getSplitRatio());
 				//It's an individual expense
 				prepareResultMap(request, settlement, set, resultObject,
 						settlement.getPayeeId(),
@@ -232,10 +234,12 @@ public class SudokuPrimeApplication {
 			if(!request.userId.equals(payeeId)){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount);
+				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "+" + amount);
 				resultObject.put(payeeId, settlementFriendModel);
 			} else if(!request.userId.equals(settlement.getPayerId())){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount);
+				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "-" + amount);
 				resultObject.put(settlement.getPayerId(), settlementFriendModel);
 			}
 		}
