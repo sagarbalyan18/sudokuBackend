@@ -155,6 +155,15 @@ public class SudokuPrimeApplication {
 		}
 	}
 
+	@PostMapping("/settleExpenses")
+	public ApiStatus settleExpenses(@RequestBody SettlementDetailsRequest request){
+		List<SettlementModel> settlementList = settlementRepository.getSettlementByPayerId(request.payerId, request.payeeId);
+		for(SettlementModel settlement: settlementList){
+			settlement.setSettled(true);
+		}
+		return new ApiStatus("success", "Successfully processed request.");
+	}
+
 	@PostMapping("/getGroupSettlements")
 	public List<SettlementModel> getGroupSettlements(@RequestBody GroupIdRequest groupIdRequest){
 		List<SettlementModel> settlementModel = settlementRepository.getSettlementsByGroupId(groupIdRequest.groupId);
@@ -314,6 +323,8 @@ public class SudokuPrimeApplication {
 
 	/* Records */
 
+	record SettleExpenseRequest(String date){}
+
 	record UserRequest(
 			String name,
 			String userId,
@@ -378,7 +389,6 @@ public class SudokuPrimeApplication {
 	}
 
 	record SettlementDetailsRequest(
-			String userId,
 			String payerId,
 			String payeeId) {
 	}
