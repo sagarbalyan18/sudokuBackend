@@ -172,6 +172,7 @@ public class SudokuPrimeApplication {
 		List<SettlementModel> settlementModelList = settlementRepository.getAllSettlements(request.userId);
 		Set<String> set = new HashSet<>();
 		List<SettlementFriendModel> result = new ArrayList<>();
+		double totalAmount = 0;
 		HashMap resultObject = new HashMap();
 		for (SettlementModel settlement:  settlementModelList) {
 			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",") ){
@@ -198,17 +199,17 @@ public class SudokuPrimeApplication {
 			} else {
 				System.out.println("First expense: " + settlement.getAmount()*settlement.getSplitRatio());
 				//It's an individual expense
-				prepareResultMap(request, settlement, set, resultObject,
+				totalAmount+=prepareResultMap(request, settlement, set, resultObject,
 						settlement.getPayeeId(),
 						settlement.getPayeeName(),
-						settlement.getAmount()*settlement.getSplitRatio()
-				);
+						settlement.getAmount()*settlement.getSplitRatio());
 			}
+			settlement.setAmount(totalAmount);
 		}
 		return getListFromMap(resultObject, result);
 	}
 
-	private void prepareResultMap(SettlementDetailsRequest request,
+	private double prepareResultMap(SettlementDetailsRequest request,
 								  SettlementModel settlement,
 								  Set<String> set,
 								  HashMap resultObject,
@@ -236,13 +237,16 @@ public class SudokuPrimeApplication {
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount);
 				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "+" + amount);
 				resultObject.put(payeeId, settlementFriendModel);
+				return settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount;
 			} else if(!request.userId.equals(settlement.getPayerId())){
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount);
 				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "-" + amount);
 				resultObject.put(settlement.getPayerId(), settlementFriendModel);
+				return settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount;
 			}
 		}
+		return 0;
 	}
 
 	private List<SettlementFriendModel> getListFromMap(HashMap resultObject, List<SettlementFriendModel> result) {
