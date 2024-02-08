@@ -389,6 +389,7 @@ public class SudokuPrimeApplication {
 	}
 
 	record SettlementDetailsRequest(
+			String userId,
 			String payerId,
 			String payeeId) {
 	}
