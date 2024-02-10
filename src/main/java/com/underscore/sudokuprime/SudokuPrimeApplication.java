@@ -2,10 +2,7 @@ package com.underscore.sudokuprime;
 
 import com.underscore.sudokuprime.firebase.FCMService;
 import com.underscore.sudokuprime.models.*;
-import com.underscore.sudokuprime.repository.GroupRepository;
-import com.underscore.sudokuprime.repository.RoomRepository;
-import com.underscore.sudokuprime.repository.SettlementRepository;
-import com.underscore.sudokuprime.repository.UserRepository;
+import com.underscore.sudokuprime.repository.*;
 import com.underscore.sudokuprime.utils.Constant;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
@@ -35,16 +32,19 @@ public class SudokuPrimeApplication {
 	private final RoomRepository roomRepository;
 	private final SettlementRepository settlementRepository;
 	private final GroupRepository groupRepository;
+	private final FeedbackRepository feedbackRepository;
 
 	public SudokuPrimeApplication(UserRepository userRepository,
 								  RoomRepository roomRepository,
 								  SettlementRepository settlementRepository,
-								  GroupRepository groupRepository
+								  GroupRepository groupRepository,
+								  FeedbackRepository feedbackRepository
 								  ) {
 		this.userRepository = userRepository;
 		this.roomRepository = roomRepository;
 		this.settlementRepository = settlementRepository;
 		this.groupRepository = groupRepository;
+		this.feedbackRepository = feedbackRepository;
 	}
 
 	public static void main(String[] args) {
@@ -294,6 +294,16 @@ public class SudokuPrimeApplication {
 		return new ApiStatus("success", "Successfully processed request.");
 	}
 
+	@PostMapping("/submitFeedback")
+	public ApiStatus submitFeedback(@RequestBody FeedbackRequest feedbackRequest){
+		FeedbackModel feedback = new FeedbackModel();
+		feedback.setName(feedbackRequest.name);
+		feedback.setUserId(feedbackRequest.userId);
+		feedback.setFeedback(feedbackRequest.feedback);
+		feedbackRepository.save(feedback);
+		return new ApiStatus("success", "Successfully processed request.");
+	}
+
 	@PostMapping("/getGroupDetails")
 	public GroupModel getGroupDetails(@RequestBody GroupIdRequest groupIdRequest){
 		return groupRepository.findByGroupId(groupIdRequest.groupId);
@@ -365,6 +375,12 @@ public class SudokuPrimeApplication {
 			String groupName,
 			String groupPic,
 			String members) {
+	}
+
+	record FeedbackRequest(
+			String userId,
+			String name,
+			String feedback) {
 	}
 
     record UserResult(
