@@ -289,6 +289,7 @@ public class SudokuPrimeApplication {
 		group.setGroupId(groupRequest.groupId);
 		group.setGroupName(groupRequest.groupName);
 		group.setMembers(groupRequest.members);
+		group.setGroupPic(groupRequest.groupPic);
 		groupRepository.save(group);
 		return new ApiStatus("success", "Successfully processed request.");
 	}
@@ -362,6 +363,7 @@ public class SudokuPrimeApplication {
 	record GroupRequest(
 			String groupId,
 			String groupName,
+			String groupPic,
 			String members) {
 	}
 

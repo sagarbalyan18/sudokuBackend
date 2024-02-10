@@ -14,6 +14,7 @@ public class GroupModel {
     @Column(unique = true)
     private String groupId;
     private String members;
+    private String groupPic;
 
     public String getGroupName() {
         return groupName;
@@ -37,5 +38,13 @@ public class GroupModel {
 
     public void setMembers(String members) {
         this.members = members;
+    }
+
+    public String getGroupPic() {
+        return groupPic;
+    }
+
+    public void setGroupPic(String groupPic) {
+        this.groupPic = groupPic;
     }
 }
