@@ -124,6 +124,21 @@ public class SudokuPrimeApplication {
 		}
 	}
 
+	@PostMapping("/editGroup")
+	public ApiStatus editGroup(@RequestBody EditGroupRequest editGroupRequest){
+		GroupModel group = groupRepository.findByGroupId(editGroupRequest.groupId);
+		if(group!=null){
+			group.setGroupName(editGroupRequest.groupName);
+			group.setGroupPic(editGroupRequest.groupPic);
+			group.setGroupCover(editGroupRequest.groupCover);
+			group.setMembers(editGroupRequest.groupMembers);
+			groupRepository.save(group);
+			return new ApiStatus("success", "Successfully processed request.");
+		} else {
+			return new ApiStatus("failure", "User doesn't exist");
+		}
+	}
+
 	@PostMapping("/editSettlement")
 	public ApiStatus editSettlement(@RequestBody EditSettlementRequest request){
 		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.pKey)).orElse(null);
@@ -360,6 +375,16 @@ public class SudokuPrimeApplication {
 			String email,
 			String upi,
 			String userPic
+	){
+
+	}
+
+	record EditGroupRequest(
+			String groupId,
+			String groupName,
+			String groupPic,
+			String groupCover,
+			String groupMembers
 	){
 
 	}

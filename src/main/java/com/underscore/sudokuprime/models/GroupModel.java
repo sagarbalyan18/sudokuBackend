@@ -15,6 +15,7 @@ public class GroupModel {
     private String groupId;
     private String members;
     private String groupPic;
+    private String groupCover;
 
     public String getGroupName() {
         return groupName;
@@ -46,5 +47,13 @@ public class GroupModel {
 
     public void setGroupPic(String groupPic) {
         this.groupPic = groupPic;
+    }
+
+    public String getGroupCover() {
+        return groupCover;
+    }
+
+    public void setGroupCover(String groupCover) {
+        this.groupCover = groupCover;
     }
 }
