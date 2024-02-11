@@ -14,7 +14,9 @@ public class GroupModel {
     @Column(unique = true)
     private String groupId;
     private String members;
+    @Column(length = Integer.MAX_VALUE)
     private String groupPic;
+    @Column(length = Integer.MAX_VALUE)
     private String groupCover;
 
     public String getGroupName() {
