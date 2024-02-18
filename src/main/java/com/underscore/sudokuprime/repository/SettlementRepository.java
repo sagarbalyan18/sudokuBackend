@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SettlementRepository extends JpaRepository<SettlementModel,Integer> {
 
-    @Query(value = "SELECT * FROM settlement_model WHERE ((payer_id=?1 and payee_id=?2) or (payer_id=?2 and payee_id=?1)) and is_settled=false",nativeQuery = true)
+    @Query(value = "SELECT * FROM settlement_model WHERE ((payer_id=?1 and payee_id=?2) or (payer_id=?2 and payee_id=?1)) and is_settled=false order by date asc",nativeQuery = true)
     List<SettlementModel> getSettlementByPayerId(String payerId, String payeeId);
 
     @Query(value = "SELECT * FROM settlement_model WHERE payer_id LIKE %:userId% or payee_id LIKE %:userId%", nativeQuery = true)
