@@ -145,6 +145,8 @@ public class SudokuPrimeApplication {
 		if(settlement!=null){
 			System.out.println("Settlement found");
 			settlement.setDate(request.date);
+			settlement.setPayerId(request.payerId);
+			settlement.setPayeeId(request.payeeId);
 			settlement.setAmount(request.amount);
 			settlement.setDescription(request.description);
 			settlement.setSplitRatio(request.splitRatio);
@@ -443,12 +445,13 @@ public class SudokuPrimeApplication {
 			String description,
 			String category,
 			String date,
+			String payerId,
+			String payeeId,
 			double splitRatio,
 			boolean isSettled,
 			String pKey,
 			String bill
 	){}
-
 
 	record CreateRoomResponse(String status,
 							 String roomId) {
