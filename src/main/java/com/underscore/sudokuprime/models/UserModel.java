@@ -19,6 +19,8 @@ public class UserModel {
     private String totalAmount;
     @Column(length = Integer.MAX_VALUE)
     private String userPic;
+    @Column(length = Integer.MAX_VALUE)
+    private String userCover;
 
     public UserModel() {
     }
@@ -106,5 +108,13 @@ public class UserModel {
 
     public void setUserPic(String userPic) {
         this.userPic = userPic;
+    }
+
+    public String getUserCover() {
+        return userCover;
+    }
+
+    public void setUserCover(String userCover) {
+        this.userCover = userCover;
     }
 }

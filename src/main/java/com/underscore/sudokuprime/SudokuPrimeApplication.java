@@ -80,6 +80,8 @@ public class SudokuPrimeApplication {
 		user.setFcmToken(userRequest.fcmToken);
 		user.setUpi(userRequest.upi);
 		user.setUserPic(userRequest.userPic);
+		user.setUserPic(userRequest.userPic);
+		user.setUserCover(userRequest.userCover);
 		userRepository.save(user);
 		return new ApiStatus("success", "Successfully processed request.");
 	}
@@ -366,7 +368,8 @@ public class SudokuPrimeApplication {
 			String totalBoardPlayed,
 			String fcmToken,
 			String upi,
-			String userPic
+			String userPic,
+			String userCover
 			){
 
 	}
