@@ -13,13 +13,14 @@ public class SettlementFriendModel {
     private long pKey;
     private String payeeName;
     private String payeeId;
+    private String payeePic;
     private String payerId;
     private String payerName;
+    private String payerPic;
     private double amount;
     private String nextAutoReminder;
     private double splitRatio;
     private String groupId;
-
 
     public SettlementFriendModel(String payeeNme,
                                  double amount,
@@ -101,5 +102,21 @@ public class SettlementFriendModel {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getPayerPic() {
+        return payerPic;
+    }
+
+    public void setPayerPic(String payerPic) {
+        this.payerPic = payerPic;
+    }
+
+    public String getPayeePic() {
+        return payeePic;
+    }
+
+    public void setPayeePic(String payeePic) {
+        this.payeePic = payeePic;
     }
 }
