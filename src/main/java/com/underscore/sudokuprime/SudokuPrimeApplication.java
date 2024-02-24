@@ -119,6 +119,7 @@ public class SudokuPrimeApplication {
 			user.setEmail(userRequest.email);
 			user.setUpi(userRequest.upi);
 			user.setUserPic(userRequest.userPic);
+			user.setUserCover(userRequest.userCover);
 			userRepository.save(user);
 			return new ApiStatus("success", "Successfully processed request.");
 		} else {
@@ -379,7 +380,8 @@ public class SudokuPrimeApplication {
 			String name,
 			String email,
 			String upi,
-			String userPic
+			String userPic,
+			String userCover
 	){
 
 	}
