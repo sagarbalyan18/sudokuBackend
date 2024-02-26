@@ -164,6 +164,17 @@ public class SudokuPrimeApplication {
 	}
 
 	@PostMapping("/deleteSettlement")
+	public ApiStatus deleteSettlement(@RequestBody DeleteSettlementRequest request){
+		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.pKey)).orElse(null);
+		if(settlement!=null){
+			settlementRepository.deleteSettlement(request.pKey);
+			return new ApiStatus("success", "Successfully processed request.");
+		} else {
+			return new ApiStatus("failure", "User doesn't exist");
+		}
+	}
+
+	@PostMapping("/deleteSettlement")
 	public ApiStatus deleteSettlement(@RequestBody SettlementIdRequest request){
 		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.id)).orElse(null);
 		if(settlement!=null){
@@ -460,6 +471,9 @@ public class SudokuPrimeApplication {
 
 	record CreateRoomResponse(String status,
 							 String roomId) {
+	}
+
+	record DeleteSettlementRequest(String pKey) {
 	}
 
 	record JoinRoomRequest(String roomId, String userId) {
