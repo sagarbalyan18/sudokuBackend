@@ -174,18 +174,6 @@ public class SudokuPrimeApplication {
 		}
 	}
 
-	@PostMapping("/deleteSettlement")
-	public ApiStatus deleteSettlement(@RequestBody SettlementIdRequest request){
-		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.id)).orElse(null);
-		if(settlement!=null){
-			System.out.println("Settlement found");
-			settlementRepository.delete(settlement);
-			return new ApiStatus("success", "Successfully processed request.");
-		} else {
-			return new ApiStatus("failure", "Settlement processed request.");
-		}
-	}
-
 	@PostMapping("/settleExpenses")
 	public ApiStatus settleExpenses(@RequestBody SettlementDetailsRequest request){
 		List<SettlementModel> settlementList = settlementRepository.getSettlementByPayerId(request.payerId, request.payeeId);
