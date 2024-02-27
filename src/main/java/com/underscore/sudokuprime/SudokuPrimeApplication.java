@@ -8,10 +8,7 @@ import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -163,15 +160,10 @@ public class SudokuPrimeApplication {
 		}
 	}
 
-	@PostMapping("/deleteSettlement")
+	@DeleteMapping("/deleteSettlement")
 	public ApiStatus deleteSettlement(@RequestBody DeleteSettlementRequest request){
-		SettlementModel settlement = settlementRepository.findById(Integer.valueOf(request.pKey)).orElse(null);
-		if(settlement!=null){
-			settlementRepository.deleteSettlement(request.pKey);
-			return new ApiStatus("success", "Successfully processed request.");
-		} else {
-			return new ApiStatus("failure", "User doesn't exist");
-		}
+		settlementRepository.deleteById(request.pKey);
+		return new ApiStatus("success", "Successfully processed request.");
 	}
 
 	@PostMapping("/settleExpenses")
