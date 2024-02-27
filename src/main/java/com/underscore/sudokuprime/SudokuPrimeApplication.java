@@ -198,37 +198,28 @@ public class SudokuPrimeApplication {
 
 	@PostMapping("/getSettlementFriends")
 	public List<SettlementFriendModel> getSettlementFriends(@RequestBody SettlementDetailsRequest request){
+		//Get all settlements
 		List<SettlementModel> settlementModelList = settlementRepository.getAllSettlements(request.userId);
+		//Set to maintain unique user id, so that a user is not added in the map twice
 		Set<String> set = new HashSet<>();
 		List<SettlementFriendModel> result = new ArrayList<>();
-		double totalAmount = 0d;
-		HashMap resultObject = new HashMap();
+
+		//Map - of Userid, and the user's expense
+		HashMap<String, SettlementFriendModel> resultObject = new HashMap();
+
+		//Loop through all the expenses
 		for (SettlementModel settlement:  settlementModelList) {
 			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",") ){
-				//It's an expense from the group
-				if(settlement.getPayeeId().contains(",") && settlement.getPayeeName().contains(",")){
-					//There are multiple payees
-					List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
-					List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
-					System.out.println("amount: " + settlement.getAmount()/ payeesIdList.size());
-					for(int i=0; i< payeesIdList.size(); i++){
-						prepareResultMap(request,
-								settlement,
-								set,
-								resultObject,
-								payeesIdList.get(i),
-								payeesNameList.get(i),
-								settlement.getAmount()/ payeesIdList.size()
-								);
-					}
-
-				} else if(settlement.getPayerId().contains(",")){
-					//There are multiple payers - TODO later as this is less common
-				}
+				//It's an expense from the group because either payers are more than 1
+				// or payees are more than one
+				handleGroupExpense(settlement, request, set, resultObject);
 			} else {
 				//It's an individual expense (i.e.e Not a group expense)
 				System.out.println("New expense: " + settlement.getAmount()*settlement.getSplitRatio());
-				prepareResultMap(request, settlement, set, resultObject,
+				prepareResultMap(request,
+						settlement,
+						set,
+						resultObject,
 						settlement.getPayeeId(),
 						settlement.getPayeeName(),
 						settlement.getAmount()*settlement.getSplitRatio()
@@ -236,6 +227,32 @@ public class SudokuPrimeApplication {
 			}
 		}
 		return getListFromMap(resultObject, result);
+	}
+
+	private void handleGroupExpense(
+			SettlementModel settlement,
+			SettlementDetailsRequest request,
+			Set<String> set,
+			HashMap<String, SettlementFriendModel> resultObject){
+		if(settlement.getPayeeId().contains(",") && settlement.getPayeeName().contains(",")){
+			//There are multiple payees
+			List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
+			List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
+			System.out.println("amount: " + settlement.getAmount()/ payeesIdList.size());
+			for(int i=0; i< payeesIdList.size(); i++){
+				prepareResultMap(request,
+						settlement,
+						set,
+						resultObject,
+						payeesIdList.get(i),
+						payeesNameList.get(i),
+						settlement.getAmount()/ payeesIdList.size()
+				);
+			}
+
+		} else if(settlement.getPayerId().contains(",")){
+			//There are multiple payers - TODO later as this is less common
+		}
 	}
 
 	private void prepareResultMap(SettlementDetailsRequest request,
@@ -247,30 +264,36 @@ public class SudokuPrimeApplication {
 								  double amount
 								  ){
 		if((!request.userId.equals(settlement.getPayeeId()) && set.add(payeeId))){
-			//This user has not been added in the map so add it
-			//Requesting User paid
+			// 1. User not added in set
+			// 2. User is not the payee
+			// 3.  +amount because user is not the payee, he is the payer
 			resultObject.put(
 					payeeId,
-					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
+					getSettlementFriendObject(settlement, payeeId, payeeName, amount*settlement.getSplitRatio())
 			);
 			System.out.println("resultObject.put:" + payeeId + ": " + amount);
 		} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
-			//This user has not been added in the map so add it
-			//Requesting User did not pay
+			// 1. User not added in set
+			// 2. User is not the payer
+			// 3. -amount because user is not the payer, he is the payee
 			resultObject.put(
 					settlement.getPayerId(),
-					getSettlementFriendObject(settlement, payeeId, payeeName, -amount)
+					getSettlementFriendObject(settlement, payeeId, payeeName, -amount*settlement.getSplitRatio())
 			);
 			System.out.println("resultObject.put:" + payeeId + ": " + amount);
 		}else {
+			// User is already added in the set
 			//update the current user details in the map with the new expense
 			System.out.println("update the current list item");
+			//Find out if user is the payer or the payee
 			if (!request.userId.equals(payeeId)) {
+				//User is not the payee, he is the payer
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount);
 				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "+" + amount +  "=" + (settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount));
 				resultObject.put(payeeId, settlementFriendModel);
 			} else if(!request.userId.equals(settlement.getPayerId())){
+				//User is not the payer, he is the payee
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
 				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount);
 				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "-" + amount +  "=" + (settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount));
