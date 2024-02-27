@@ -484,7 +484,7 @@ public class SudokuPrimeApplication {
 							 String roomId) {
 	}
 
-	record DeleteSettlementRequest(String pKey) {
+	record DeleteSettlementRequest(int pKey) {
 	}
 
 	record JoinRoomRequest(String roomId, String userId) {
