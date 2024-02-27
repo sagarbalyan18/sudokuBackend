@@ -20,7 +20,7 @@ public interface SettlementRepository extends JpaRepository<SettlementModel,Inte
     List<SettlementModel> getSettlementsByGroupId(String groupId);
 
     @Query(value = "DELETE FROM settlement_model WHERE p_key=?",nativeQuery = true)
-    List<SettlementModel> deleteSettlement(String pKey);
+    List<SettlementModel> deleteSettlement(int pKey);
 
 /*  @Query(value = "SELECT * FROM settlement_model WHERE payer_id=?1 or payee_id=?1",nativeQuery = true)
     List<SettlementModel> getAllSettlements(String userId);*/
