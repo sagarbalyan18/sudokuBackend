@@ -269,7 +269,7 @@ public class SudokuPrimeApplication {
 			// 3.  +amount because user is not the payee, he is the payer
 			resultObject.put(
 					payeeId,
-					getSettlementFriendObject(settlement, payeeId, payeeName, amount*settlement.getSplitRatio())
+					getSettlementFriendObject(settlement, payeeId, payeeName, amount)
 			);
 			System.out.println("resultObject.put:" + payeeId + ": " + amount);
 		} else if(!request.userId.equals(settlement.getPayerId()) && set.add(settlement.getPayerId())){
@@ -278,7 +278,7 @@ public class SudokuPrimeApplication {
 			// 3. -amount because user is not the payer, he is the payee
 			resultObject.put(
 					settlement.getPayerId(),
-					getSettlementFriendObject(settlement, payeeId, payeeName, -amount*settlement.getSplitRatio())
+					getSettlementFriendObject(settlement, payeeId, payeeName, -amount)
 			);
 			System.out.println("resultObject.put:" + payeeId + ": " + amount);
 		}else {
@@ -289,13 +289,13 @@ public class SudokuPrimeApplication {
 			if (!request.userId.equals(payeeId)) {
 				//User is not the payee, he is the payer
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(payeeId);
-				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount);
+				settlementFriendModel.setAmount(settlementFriendModel.getAmount()+amount);
 				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "+" + amount +  "=" + (settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()+amount));
 				resultObject.put(payeeId, settlementFriendModel);
 			} else if(!request.userId.equals(settlement.getPayerId())){
 				//User is not the payer, he is the payee
 				SettlementFriendModel settlementFriendModel = (SettlementFriendModel) resultObject.get(settlement.getPayerId());
-				settlementFriendModel.setAmount(settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount);
+				settlementFriendModel.setAmount(settlementFriendModel.getAmount()-amount);
 				System.out.println("More expense: " + settlement.getAmount()*settlement.getSplitRatio() + "-" + amount +  "=" + (settlementFriendModel.getAmount()*settlementFriendModel.getSplitRatio()-amount));
 				resultObject.put(settlement.getPayerId(), settlementFriendModel);
 			}
