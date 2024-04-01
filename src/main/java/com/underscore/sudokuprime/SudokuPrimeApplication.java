@@ -227,6 +227,7 @@ public class SudokuPrimeApplication {
 			SettlementDetailsRequest request,
 			Set<String> set,
 			HashMap<String, SettlementFriendModel> resultObject){
+		System.out.println("settlementFriendApi: It's a group expense");
 
 		if(settlement.getPayeeId().contains(",") && settlement.getPayeeName().contains(",")){
 			//There are multiple payees
