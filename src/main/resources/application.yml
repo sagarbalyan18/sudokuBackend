@@ -3,7 +3,10 @@ server:
 
 spring:
   datasource:
+#    uat
     url: jdbc:postgresql://postgres1.cqjcsrxo1aks.us-east-1.rds.amazonaws.com/postgres
+#    prod
+#    url: jdbc:postgresql://database-2.cqjcsrxo1aks.us-east-1.rds.amazonaws.com/postgres
     username: postgres
     password: izharbhai
   jpa:

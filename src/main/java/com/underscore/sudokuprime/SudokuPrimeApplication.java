@@ -207,6 +207,7 @@ public class SudokuPrimeApplication {
 				handleGroupExpense(settlement, request, set, resultObject);
 			} else {
 				//It's an individual expense (i.e.e Not a group expense)
+				System.out.println("settlementFriendApi: It's an individual expense");
 				System.out.println("New expense: " + settlement.getAmount()*settlement.getSplitRatio());
 				prepareResultMap(request,
 						settlement,
@@ -226,12 +227,14 @@ public class SudokuPrimeApplication {
 			SettlementDetailsRequest request,
 			Set<String> set,
 			HashMap<String, SettlementFriendModel> resultObject){
+
 		if(settlement.getPayeeId().contains(",") && settlement.getPayeeName().contains(",")){
 			//There are multiple payees
 			List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
 			List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
 			System.out.println("amount: " + settlement.getAmount()/ payeesIdList.size());
 			for(int i=0; i< payeesIdList.size(); i++){
+				System.out.println("settlementFriendApi: It's a group expense");
 				prepareResultMap(request,
 						settlement,
 						set,
