@@ -235,7 +235,7 @@ public class SudokuPrimeApplication {
 			List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
 			System.out.println("amount: " + settlement.getAmount()/ payeesIdList.size());
 			for(int i=0; i< payeesIdList.size(); i++){
-				System.out.println("settlementFriendApi: It's a group expense");
+				System.out.println("settlementFriendApi: Group expense: Id + " + payeesIdList.get(i));
 				prepareResultMap(request,
 						settlement,
 						set,
