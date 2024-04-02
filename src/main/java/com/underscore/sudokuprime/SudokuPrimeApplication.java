@@ -202,7 +202,7 @@ public class SudokuPrimeApplication {
 
 		//Loop through all the expenses
 		for (SettlementModel settlement:  settlementModelList) {
-			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",") ){
+			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",")){
 				//It's an expense from the group because either payers are more than 1
 				// or payees are more than one
 				handleGroupExpense(settlement, request, set, resultObject);
@@ -242,7 +242,7 @@ public class SudokuPrimeApplication {
 						set,
 						resultObject,
 						payeesIdList.get(i),
-						settlement.getPayeeName(),
+						payeesNameList.get(i),
 						settlement.getAmount()/ payeesIdList.size()
 				);
 			}
