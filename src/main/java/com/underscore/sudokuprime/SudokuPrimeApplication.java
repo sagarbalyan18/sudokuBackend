@@ -241,7 +241,7 @@ public class SudokuPrimeApplication {
 						set,
 						resultObject,
 						payeesIdList.get(i),
-						payeesNameList.get(i),
+						settlement.getPayeeName(),
 						settlement.getAmount()/ payeesIdList.size()
 				);
 			}
