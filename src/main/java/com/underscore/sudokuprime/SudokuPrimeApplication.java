@@ -93,6 +93,7 @@ public class SudokuPrimeApplication {
 		settlement.setPayeeName(settlementRequest.payeeName);
 		settlement.setAmount(settlementRequest.amount);
 		settlement.setGroupId(settlementRequest.groupId);
+		settlement.setGroupName(settlementRequest.groupName);
 		settlement.setDescription(settlementRequest.description);
 		settlement.setCategory(settlementRequest.category);
 		settlement.setSplitRatio(settlementRequest.splitRatio);
@@ -496,6 +497,7 @@ public class SudokuPrimeApplication {
 							 String payeeName,
 							 double amount,
 							 String groupId,
+							 String groupName,
 							 String description,
 							 String category,
 							 double splitRatio,

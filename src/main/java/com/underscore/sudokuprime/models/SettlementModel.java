@@ -15,6 +15,7 @@ public class SettlementModel {
     private String description;
     private String category;
     private String groupId;
+    private String groupName;
     private double splitRatio;
     private double amount;
     private boolean isSettled;
@@ -119,5 +120,13 @@ public class SettlementModel {
 
     public void setBill(String bill) {
         this.bill = bill;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }
