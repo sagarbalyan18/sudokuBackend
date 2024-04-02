@@ -229,7 +229,7 @@ public class SudokuPrimeApplication {
 			HashMap<String, SettlementFriendModel> resultObject){
 		System.out.println("settlementFriendApi: It's a group expense");
 
-		if(settlement.getPayeeId().contains(",") && settlement.getPayeeName().contains(",")){
+		if(settlement.getPayeeId().contains(",")){
 			//There are multiple payees
 			List<String> payeesIdList = List.of(settlement.getPayeeId().split(","));
 			List<String> payeesNameList = List.of(settlement.getPayeeName().split(","));
