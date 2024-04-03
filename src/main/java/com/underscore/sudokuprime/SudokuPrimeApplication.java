@@ -205,7 +205,7 @@ public class SudokuPrimeApplication {
 			if(settlement.getPayeeId().contains(",") || settlement.getPayerId().contains(",")){
 				//It's an expense from the group because either payers are more than 1
 				// or payees are more than one
-				handleGroupExpense(settlement, request, set, resultObject);
+				handleGroupExpense(settlement, request, set, request.userId, resultObject);
 			} else {
 				//It's an individual expense (i.e.e Not a group expense)
 				System.out.println("settlementFriendApi: It's an individual expense");
@@ -227,6 +227,7 @@ public class SudokuPrimeApplication {
 			SettlementModel settlement,
 			SettlementDetailsRequest request,
 			Set<String> set,
+			String userId,
 			HashMap<String, SettlementFriendModel> resultObject){
 		System.out.println("settlementFriendApi: It's a group expense");
 
@@ -237,14 +238,16 @@ public class SudokuPrimeApplication {
 			System.out.println("amount: " + settlement.getAmount()/ payeesIdList.size());
 			for(int i=0; i< payeesIdList.size(); i++){
 				System.out.println("settlementFriendApi: Group expense: Id + " + payeesIdList.get(i));
-				prepareResultMap(request,
-						settlement,
-						set,
-						resultObject,
-						payeesIdList.get(i),
-						payeesNameList.get(i),
-						settlement.getAmount()/ payeesIdList.size()
-				);
+				if(!payeesIdList.get(i).equals(userId)){
+					prepareResultMap(request,
+							settlement,
+							set,
+							resultObject,
+							payeesIdList.get(i),
+							payeesNameList.get(i),
+							settlement.getAmount()/ payeesIdList.size()
+					);
+				}
 			}
 
 		} else if(settlement.getPayerId().contains(",")){
